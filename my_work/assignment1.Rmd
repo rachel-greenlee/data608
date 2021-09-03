@@ -2,8 +2,9 @@
 title: "DATA 608 - Assignment 1"
 author: "Rachel Greenlee"
 output:
-  html_document: default
+  pdf_document: default
   html_notebook: default
+  html_document: default
 ---
 
 ```{r}
@@ -127,8 +128,8 @@ inc %>%
     coord_flip() +
     labs(title = "NY Companies by # of Employees by Industry", 
        subtitle = "graph does not show two outlyers (Coty & Sutherland)",
-       x="# of Employees", 
-       y="Industry") +
+       x="Industry", 
+       y="# of Employees per Company in NY") +
     ylim(NA, 1000) +
     my_plot_theme
 
@@ -157,10 +158,10 @@ inc %>%
   ggplot(aes(x = reorder(Industry, rev_per_emp), y = rev_per_emp)) +
     geom_bar(stat = "identity", fill = mpeach) +
     coord_flip() +
-    labs(title = "NY Companies by # of Employees by Industry", 
-       subtitle = "graph does not show two outlyers (Coty & Sutherland)",
-       x="# of Employees", 
-       y="Industry") +
+    labs(title = "Revenue per Employee by Industry", 
+       subtitle = "total revenue of industry / total count employees of industry",
+       x = "Industry", 
+       y = "Revenue per Employee") +
     my_plot_theme
 
 
