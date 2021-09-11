@@ -2,13 +2,14 @@
 title: "DATA 608 - Assignment 1"
 author: "Rachel Greenlee"
 output:
-  html_document: default
-  html_notebook: default
   pdf_document: default
+  word_document: default
 ---
 
 ```{r, include=FALSE} 
 knitr::opts_chunk$set(message=FALSE, warning=FALSE, out.width = "100%")
+options(tinytex.verbose = TRUE)
+
 ```
 
 ```{r}
@@ -16,6 +17,7 @@ library('dplyr')
 library('ggplot2')
 library('kableExtra')
 library('formattable')
+library('tinytex')
 
 mpeach <- "#FBAA82"
 mteal <- "#73A2AC"
@@ -186,8 +188,6 @@ inc %>%
               color = mgray,
               hjust = -0.1) +
     my_plot_theme
-
-?scales
 ```
 
 
