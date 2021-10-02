@@ -1,0 +1,85 @@
+---
+title: "App_chicken_scratch"
+author: "Rachel Greenlee"
+date: "9/25/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Question 1: As a researcher, you frequently compare mortality rates from particular causes across different States. You need a visualization that will let you see (for 2010 only) the crude mortality rate, across all States, from one cause (for example, Neoplasms, which are effectively cancers). Create a visualization that allows you to rank States by crude mortality for each cause of death.
+
+```{r}
+mort <- read.csv("https://raw.githubusercontent.com/charleyferrari/CUNY_DATA_608/master/module3/data/cleaned-cdc-mortality-1999-2010-2.csv", header = TRUE)
+
+```
+
+
+```{r}
+# create subset with just 2010 data
+mort_2010 <- subset(mort, Year == "2010")
+
+# group by state and disease, with new variables showing the sum of deaths & pop in that grouping
+mort_2010 <- mort_2010 %>%
+          group_by(State, ICD.Chapter) %>%
+          summarize(tot_deaths = sum(Deaths), tot_pop = sum(Population))
+
+# create new variable crude_rate to recalculate the crude rate at this grouping level
+mort_2010$crude_rate <- round((mort_2010$tot_deaths / mort_2010$tot_pop) * 100000, 4)
+  
+
+
+```
+
+
+```{r}
+  # make lollipop chart
+    mort_2010 %>%
+      arrange(crude_rate) %>%   
+      mutate(State = factor(State, levels = State)) %>%
+      ggplot(aes(x = reorder(State, crude_rate), y = crude_rate, label = State)) +
+      geom_segment(aes(xend = State, yend = 0), color = "grey50") +
+      geom_point( size=12, color="orange") +
+      geom_text(color = "white", size = 7) +
+      coord_flip() +
+      xlab("State") +
+      ylab("Crude Rate (per 100,000)") +
+      labs(title = "2020 Crude Mortality Rates, by State",
+           subtitle = "Crude mortality rates are calculated based on the state's population and the number of death's by the selected cause. The actual values below represent the number of deaths per 100,000 individuals.",
+           caption = "Note: data is not available for all states on all causes.") +
+      theme(axis.title.y=element_blank(),
+            axis.text.y=element_blank(),
+            axis.ticks.y=element_blank())
+```
+
+```{r, fig.height=10, fig.width=6}
+
+mort_2010_test <- subset(mort_2010, ICD.Chapter == "Neoplasms")
+
+mort_2010_test %>%
+  arrange(crude_rate) %>%   
+  mutate(State = factor(State, levels = State)) %>%
+  ggplot(aes(x = reorder(State, crude_rate), y = crude_rate, label = paste(round(crude_rate, 1)))) +
+      geom_segment(aes(xend = State, yend = 0), color = "grey50") +
+      geom_point( size=7, color="orange") +
+  geom_text(color = "white", size = 2) +
+      coord_flip() +
+      xlab("State") +
+      ylab("Crude Rate (per 100,000)") +
+      labs(title = "2020 Crude Mortality Rates, by State",
+            subtitle = "Crude mortality rates are calculated based on the state's population and the number of death's by the selected cause. The actual values below represent the number of deaths per 100,000 individuals.",
+            caption = "Note: data is not available for all states on all causes.")
+```
+
+
+
+```{r}
+ggplot(mort_2010, aes(x = crude_rate, y = reorder(State, crude_rate))) +
+      geom_bar(stat = "identity") + 
+      labs(title = "2010 Crude Mortality Rates, by State", 
+           x = "Crude Rate (Per 100,000)", 
+           y ="State")
+```
+
